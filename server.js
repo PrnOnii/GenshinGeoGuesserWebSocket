@@ -28,7 +28,15 @@ const broadcast = (data, ws) => {
 wss.on('connection', (ws) => {
   console.log('Client connected');
   // Initial data send
-  ws.send(JSON.stringify({ action: "STATUS_INIT", data: environment }));
+  ws.send(JSON.stringify({ 
+    action: "STATUS_INIT", 
+    data: {
+      environment: environment,
+      players: players
+    }
+  }));
+
+  //Global message handler
   ws.on('message', event => {
     const data = JSON.parse(event);
     console.log(data);
@@ -38,21 +46,12 @@ wss.on('connection', (ws) => {
         // broadcast({ status: "Success", data: count, tz: new Date()}, ws)
         break;
       case "ADD_PLAYER":
-        let player = players.find(pl => pl.name == data.name);
-        console.log(player);
-        if (player) {
-          ws.send(JSON.stringify({ action: "UPDATE_PLAYER_ID", data: players}))
-          break;
-        }
+        players.push({ name: data.name, score: 0, isGM: data.isGM});
         if (data.isGM) {
-          players.push({ name: data.name, id: 0, score: 0, isGM: true});
           environment.hasGM = true;
           broadcast({ action: "HAS_GM", data: null }, ws);
-        } else {
-          const playerCount = players.length + 1
-          players.push({ name: data.name, id: playerCount, score: 0, isGM: false});
         }
-        ws.send(JSON.stringify({ action: "UPDATE_PLAYERS", data: players }));
+        // ws.send(JSON.stringify({ action: "ADD_PLAYER", data: players }));
         broadcast({ action: "UPDATE_PLAYERS", data: players }, ws);
         break;
       case "RESET_VALUES":
