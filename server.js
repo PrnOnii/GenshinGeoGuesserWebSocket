@@ -21,7 +21,7 @@ wss.on('connection', (ws) => {
     switch(data.action) {
       case "increment":
         count++;
-        ws.send(JSON.stringify({ status: "Success", data: count, tz: new Date()}));
+        ws.broadcast(JSON.stringify({ status: "Success", data: count, tz: new Date()}));
         break;
       default:
         ws.send(JSON.stringify({ status: "Error", data: "Unknown message received", tz: new Date() }));
