@@ -11,14 +11,28 @@ const server = express()
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 const wss = new Server({ server });
+let count = 0;
 
 wss.on('connection', (ws) => {
   console.log('Client connected');
+  ws.on('message', event => {
+    const data = JSON.parse(event);
+    console.log(data);
+    switch(data.action) {
+      case "increment":
+        count++;
+        ws.send(JSON.stringify({ status: "Success", data: count, tz: new Date()}));
+        break;
+      default:
+        ws.send(JSON.stringify({ status: "Error", data: "Unknown message received", tz: new Date() }));
+    }
+  });
   ws.on('close', () => console.log('Client disconnected'));
 });
 
-setInterval(() => {
-  wss.clients.forEach((client) => {
-    client.send(new Date().toTimeString());
-  });
-}, 1000);
+
+// setInterval(() => {
+//   wss.clients.forEach((client) => {
+//     client.send(new Date().toTimeString());
+//   });
+// }, 1000);
