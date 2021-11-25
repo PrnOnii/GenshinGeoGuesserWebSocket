@@ -12,7 +12,6 @@ const server = express()
 
 const wss = new Server({ server });
 
-let count = 0;
 const players = [];
 const environment = {
   hasGM: false,
@@ -55,6 +54,12 @@ wss.on('connection', (ws) => {
         }
         ws.send(JSON.stringify({ action: "UPDATE_PLAYERS", data: players }));
         broadcast({ action: "UPDATE_PLAYERS", data: players }, ws);
+        break;
+      case "RESET_VALUES":
+        players = [];
+        environment = {
+          hasGM: false,
+        };
         break;
       default:
         ws.send(JSON.stringify({ status: "Error", data: "Unknown message received", tz: new Date() }));
