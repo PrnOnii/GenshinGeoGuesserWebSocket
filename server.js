@@ -51,7 +51,7 @@ wss.on('connection', (ws) => {
           environment.hasGM = true;
           broadcast({ action: "HAS_GM", data: null }, ws);
         }
-        // ws.send(JSON.stringify({ action: "ADD_PLAYER", data: players }));
+        ws.send(JSON.stringify({ action: "UPDATE_PLAYERS", data: players }));
         broadcast({ action: "UPDATE_PLAYERS", data: players }, ws);
         break;
       case "RESET_VALUES":
