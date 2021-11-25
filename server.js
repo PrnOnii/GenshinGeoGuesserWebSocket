@@ -11,7 +11,12 @@ const server = express()
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
 
 const wss = new Server({ server });
+
 let count = 0;
+const players = [];
+const environment = {
+  hasGM: false,
+};
 
 const broadcast = (data, ws) => {
   wss.clients.forEach(client => {
@@ -23,14 +28,33 @@ const broadcast = (data, ws) => {
 
 wss.on('connection', (ws) => {
   console.log('Client connected');
+  // Initial data send
+  ws.send(JSON.stringify({ action: "STATUS_INIT", data: environment }));
   ws.on('message', event => {
     const data = JSON.parse(event);
     console.log(data);
     switch(data.action) {
-      case "increment":
-        count++;
-        ws.send(JSON.stringify({ status: "Success", data: count, tz: new Date()}));
-        broadcast({ status: "Success", data: count, tz: new Date()}, ws)
+      case "KEEP_ALIVE":
+        ws.send(JSON.stringify({ action: "KEEP_ALIVE", status: "ok keeping alive" }));
+        // broadcast({ status: "Success", data: count, tz: new Date()}, ws)
+        break;
+      case "ADD_PLAYER":
+        let player = players.find(pl => pl.name == data.name);
+        console.log(player);
+        if (player) {
+          ws.send(JSON.stringify({ action: "UPDATE_PLAYER_ID", data: players}))
+          break;
+        }
+        if (data.isGM) {
+          players.push({ name: data.name, id: 0, score: 0, isGM: true});
+          environment.hasGM = true;
+          broadcast({ action: "HAS_GM", data: null }, ws);
+        } else {
+          const playerCount = players.length + 1
+          players.push({ name: data.name, id: playerCount, score: 0, isGM: false});
+        }
+        ws.send(JSON.stringify({ action: "UPDATE_PLAYERS", data: players }));
+        broadcast({ action: "UPDATE_PLAYERS", data: players }, ws);
         break;
       default:
         ws.send(JSON.stringify({ status: "Error", data: "Unknown message received", tz: new Date() }));
