@@ -13,6 +13,14 @@ const server = express()
 const wss = new Server({ server });
 let count = 0;
 
+const broadcast = (data, ws) => {
+  wss.clients.forEach(client => {
+    if (client.readyState === WebSocket.OPEN && client !== ws) {
+      client.send(JSON.stringify(data));
+    }
+  });
+};
+
 wss.on('connection', (ws) => {
   console.log('Client connected');
   ws.on('message', event => {
