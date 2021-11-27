@@ -112,8 +112,9 @@ wss.on('connection', (ws) => {
         answers = [];
         players.forEach(pl => {
           answers.push({ playerId : pl.id, x: 0, y: 0, distance: 0, score: 0});
+          pl.answered = false
         })
-        broadcast({ action: "ROUND_STARTED" }, ws);
+        broadcast({ action: "ROUND_STARTED", players: players }, ws);
         break;
       case "END_GAME":
         gameMaster = null;
@@ -122,6 +123,7 @@ wss.on('connection', (ws) => {
         environment = {
           gameStarted: false,
         };
+        broadcast({ action: "GAME_ENDED"}, ws)
       case "RESET_VALUES":
         gameMaster = null;
         players = [];
