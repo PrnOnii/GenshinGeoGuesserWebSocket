@@ -60,16 +60,16 @@ wss.on('connection', (ws) => {
           break;
         }
         players.push({ name: data.name, score: 0, id: ws.id, answered: false });
-        ws.send(JSON.stringify({ action: "UPDATE_PLAYERS", data: players }));
-        broadcast({ action: "UPDATE_PLAYERS", data: players }, ws);
+        ws.send(JSON.stringify({ action: "UPDATE_PLAYERS", players: players }));
+        broadcast({ action: "UPDATE_PLAYERS", players: players }, ws);
         break;
       case "REMOVE_PLAYER":
         var player = players.find(pl => pl.id == data.playerId);
         console.log(players.indexOf(player));
         if (answers.length > 0) { answers.splice(players.indexOf(player), 1)}
         players.splice(players.indexOf(player), 1);
-        ws.send(JSON.stringify({ action: "UPDATE_PLAYERS", data: players }));
-        broadcast({ action: "UPDATE_PLAYERS", data: players }, ws);
+        ws.send(JSON.stringify({ action: "UPDATE_PLAYERS", players: players }));
+        broadcast({ action: "UPDATE_PLAYERS", players: players }, ws);
         break;
       case "START_GAME":
         players.forEach(pl => {
