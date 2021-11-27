@@ -75,6 +75,7 @@ wss.on('connection', (ws) => {
         players.forEach(pl => {
           answers.push({ playerId : pl.id, x: 0, y: 0, distance: 0, score: 0});
         })
+        ws.send(JSON.stringify({ action: "ROUND_STARTED" }));
         broadcast({ action: "ROUND_STARTED" }, ws);
         break;
       case "SUBMIT_ANSWER":
