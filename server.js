@@ -140,8 +140,8 @@ wss.on('connection', (ws) => {
 });
 
 function computeDistance(answer, goodAnswer) {
-  let a = parseInt(this.goodAnswer.x) - parseInt(answerx);
-  let b = parseInt(this.goodAnswer.y) - parseInt(answery);
+  let a = parseInt(goodAnswer.x) - parseInt(answer.x);
+  let b = parseInt(goodAnswer.y) - parseInt(answer.y);
 
   return Math.round(Math.sqrt(a*a + b*b));
 }
