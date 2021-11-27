@@ -69,7 +69,7 @@ wss.on('connection', (ws) => {
         if (answers.length > 0) { answers.splice(players.indexOf(player), 1)}
         players.splice(players.indexOf(player), 1);
         ws.send(JSON.stringify({ action: "UPDATE_PLAYERS", players: players }));
-        broadcast({ action: "UPDATE_PLAYERS", players: players }, ws);
+        broadcast({ action: "UPDATE_PLAYERS", data: players }, ws);
         break;
       case "START_GAME":
         players.forEach(pl => {
@@ -81,7 +81,7 @@ wss.on('connection', (ws) => {
         let index = answers.findIndex(a => a.playerId == data.player.id);
         answers[index].x = data.answer.x;
         answers[index].y = data.answer.y;
-        players.find(p => p.id == data.player.id).answered == true;
+        players.find(p => p.id == data.player.id).answered = true;
         ws.send(JSON.stringify({
           action: "UPDATE_PLAYERS",
           players: players
