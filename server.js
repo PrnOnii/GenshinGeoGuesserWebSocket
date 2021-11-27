@@ -75,7 +75,7 @@ wss.on('connection', (ws) => {
         players.forEach(pl => {
           answers.push({ playerId : pl.id, x: 0, y: 0, distance: 0, score: 0});
         })
-        broadcast(JSON.stringify({ action: "ROUND_STARTED" }), ws);
+        broadcast({ action: "ROUND_STARTED" }, ws);
         break;
       case "SUBMIT_ANSWER":
         let index = answers.findIndex(a => a.playerId == data.player.id);
@@ -86,10 +86,10 @@ wss.on('connection', (ws) => {
           action: "UPDATE_PLAYERS",
           players: players
         }));
-        broadcast(JSON.stringify({
+        broadcast({
           action: "UPDATE_PLAYERS",
           players: players
-        }), ws);
+        }, ws);
         break;
       case "END_ROUND":
         answers.forEach(answer => {
@@ -102,18 +102,18 @@ wss.on('connection', (ws) => {
           players: players,
           answers: answers
         }));
-        broadcast(JSON.stringify({
+        broadcast({
           action: "SHOW_RESULTS",
           players: players,
           answers: answers
-        }), ws)
+        }, ws);
         break;
       case "NEW_ROUND":
         answers = [];
         players.forEach(pl => {
           answers.push({ playerId : pl.id, x: 0, y: 0, distance: 0, score: 0});
         })
-        broadcast(JSON.stringify({ action: "ROUND_STARTED" }), ws);
+        broadcast({ action: "ROUND_STARTED" }, ws);
         break;
       case "END_GAME":
         gameMaster = null;
